@@ -1,0 +1,86 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: projecttrace
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: projecttrace
+    ports: ["127.0.0.1:5432:5432"]
+    volumes: ["postgres-data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U projecttrace"]
+      interval: 5s
+      retries: 12
+  redis:
+    image: redis:7-alpine
+    ports: ["127.0.0.1:6379:6379"]
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes: ["redis-data:/data"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 12
+  migrate:
+    profiles: ["full"]
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    env_file: .env
+    environment: &app-environment
+      DATABASE_URL: postgresql+psycopg://projecttrace:${POSTGRES_PASSWORD}@postgres:5432/projecttrace
+      REDIS_URL: redis://redis:6379/0
+      QUEUE_MODE: rq
+      VECTOR_STORE: pgvector
+      STORAGE_DIR: /app/.storage
+    command: ["python", "-m", "alembic", "upgrade", "head"]
+    depends_on:
+      postgres: {condition: service_healthy}
+  api:
+    profiles: ["full"]
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    env_file: .env
+    environment: *app-environment
+    ports: ["127.0.0.1:8000:8000"]
+    volumes: ["uploads:/app/.storage"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+  worker:
+    profiles: ["full"]
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    env_file: .env
+    environment: *app-environment
+    command: ["python", "-m", "app.workers.runner"]
+    healthcheck: {disable: true}
+    volumes: ["uploads:/app/.storage"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+  maintenance:
+    profiles: ["full"]
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    env_file: .env
+    environment: *app-environment
+    command: ["python", "-m", "app.workers.maintenance"]
+    healthcheck: {disable: true}
+    volumes: ["uploads:/app/.storage"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+  frontend:
+    profiles: ["full"]
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports: ["127.0.0.1:8080:80"]
+    depends_on:
+      api: {condition: service_healthy}
+volumes:
+  postgres-data:
+  redis-data:
+  uploads:

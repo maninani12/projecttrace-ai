@@ -1,0 +1,14 @@
+{
+  "source_copy": "Fresh copy with local databases, virtualenv, node_modules, uploads, .env and builds excluded",
+  "python_dependencies": "Installed from requirements.lock into a newly created virtualenv",
+  "node_dependencies": "npm ci into empty node_modules; 0 audit vulnerabilities",
+  "environment": "Copied .env.example unchanged for native demo",
+  "migrations": "Alembic upgrade head on empty SQLite database passed",
+  "api_start": "passed",
+  "separate_worker": "passed",
+  "zip_upload": "passed",
+  "analysis": "COMPLETED",
+  "contradiction": "passed",
+  "question_evidence": "passed",
+  "limits": "Native SQLite/local/offline path only. PostgreSQL, Redis and containers are not exercised."
+}

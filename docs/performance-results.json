@@ -1,0 +1,35 @@
+{
+  "measured_at_utc": "2026-10-03T15:22:06.842234+00:00",
+  "environment": "Windows native, Python 3.11, SQLite, one local worker, offline provider, 7-file fixture",
+  "analysis_wall_ms": 533.03,
+  "analysis_state": "COMPLETED",
+  "normal_api_8_threads": {
+    "requests": 40,
+    "status_counts": {
+      "200": 40
+    },
+    "median_ms": 91.02,
+    "p95_ms": 120.99
+  },
+  "offline_ai_sequential": {
+    "requests": 12,
+    "status_counts": {
+      "200": 10,
+      "429": 2
+    },
+    "median_ms": 11.15,
+    "p95_ms": 74.41
+  },
+  "parsing_ms": 4.08,
+  "embedding_lexical_ms": 0.48,
+  "public_github_import": {
+    "state": "COMPLETED",
+    "error": null,
+    "snapshot": {
+      "commit_sha": "7fd1a60b01f91b314f59955a4e4d4e80d8edf11d",
+      "branch": "master",
+      "source_type": "github"
+    }
+  },
+  "limits": "Small fixture observations only. No capacity claim. AI measurement is offline retrieval, not provider latency. Docker/PostgreSQL/Redis/semantic models were not exercised."
+}

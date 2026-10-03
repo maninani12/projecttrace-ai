@@ -1,0 +1,23 @@
+{
+  "validated_date": "2026-10-03",
+  "vitest": {
+    "passed": 5,
+    "files": 2
+  },
+  "eslint": "passed",
+  "typescript_strict": "passed",
+  "vite_build": "passed",
+  "npm_audit_reported_vulnerabilities": 0,
+  "playwright": {
+    "passed": 3,
+    "duration_seconds": 13.9,
+    "browser": "Microsoft Edge",
+    "scope": "seeded account login/reload/logout, workflow and mobile"
+  },
+  "gzip_kb": {
+    "javascript": 84.1,
+    "css": 7.72
+  },
+  "ui_report": "ui-review-results.json",
+  "scope": "Local native adapters; production services not live-tested"
+}
